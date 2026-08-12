@@ -85,18 +85,19 @@ export function updateAppConfig(newSettings: {
     };
 
     if (newSettings.dates !== undefined) setOrReplace('DATES', CONFIG.dates.join(','));
-    if (newSettings.alertTo !== undefined) setOrReplace('ALERT_TO', CONFIG.alertTo);
-    if (newSettings.resendApiKey !== undefined) setOrReplace('RESEND_API_KEY', CONFIG.resendApiKey);
+    if (newSettings.alertTo !== undefined) setOrReplace('ALERT_TO', CONFIG.alertTo || '');
+    if (newSettings.resendApiKey !== undefined) setOrReplace('RESEND_API_KEY', CONFIG.resendApiKey || '');
     if (newSettings.checkIntervalSeconds !== undefined) setOrReplace('CHECK_INTERVAL_SECONDS', CONFIG.checkIntervalSeconds.toString());
-    if (newSettings.origin !== undefined) setOrReplace('ORIGIN', CONFIG.origin);
-    if (newSettings.destination !== undefined) setOrReplace('DESTINATION', CONFIG.destination);
-    if (newSettings.smtpHost !== undefined) setOrReplace('SMTP_HOST', CONFIG.smtpHost);
+    if (newSettings.origin !== undefined) setOrReplace('ORIGIN', CONFIG.origin || '');
+    if (newSettings.destination !== undefined) setOrReplace('DESTINATION', CONFIG.destination || '');
+    if (newSettings.smtpHost !== undefined) setOrReplace('SMTP_HOST', CONFIG.smtpHost || '');
     if (newSettings.smtpPort !== undefined) setOrReplace('SMTP_PORT', CONFIG.smtpPort ? CONFIG.smtpPort.toString() : '');
-    if (newSettings.smtpUser !== undefined) setOrReplace('SMTP_USER', CONFIG.smtpUser);
-    if (newSettings.smtpPass !== undefined) setOrReplace('SMTP_PASS', CONFIG.smtpPass);
-    if (newSettings.telegramBotToken !== undefined) setOrReplace('TELEGRAM_BOT_TOKEN', CONFIG.telegramBotToken);
-    if (newSettings.telegramChatId !== undefined) setOrReplace('TELEGRAM_CHAT_ID', CONFIG.telegramChatId);
+    if (newSettings.smtpUser !== undefined) setOrReplace('SMTP_USER', CONFIG.smtpUser || '');
+    if (newSettings.smtpPass !== undefined) setOrReplace('SMTP_PASS', CONFIG.smtpPass || '');
+    if (newSettings.telegramBotToken !== undefined) setOrReplace('TELEGRAM_BOT_TOKEN', CONFIG.telegramBotToken || '');
+    if (newSettings.telegramChatId !== undefined) setOrReplace('TELEGRAM_CHAT_ID', CONFIG.telegramChatId || '');
     if (newSettings.telegramEnabled !== undefined) setOrReplace('TELEGRAM_ENABLED', CONFIG.telegramEnabled ? 'true' : 'false');
+
     
     fs.writeFileSync(envPath, envContent.trim() + '\n', 'utf-8');
   } catch (err) {
