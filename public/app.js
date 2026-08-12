@@ -295,6 +295,7 @@ async function fetchStatus() {
     const intervalInput = document.getElementById('intervalInput');
     const routeSelect = document.getElementById('routeSelect');
     const brandTagline = document.querySelector('.brand-tagline');
+    const resendApiKeyInput = document.getElementById('resendApiKeyInput');
     const telegramTokenInput = document.getElementById('telegramTokenInput');
     const telegramChatIdInput = document.getElementById('telegramChatIdInput');
     const telegramEnabledInput = document.getElementById('telegramEnabledInput');
@@ -322,9 +323,13 @@ async function fetchStatus() {
     if (document.activeElement !== emailInput && data.config.alertTo !== undefined) {
       emailInput.value = data.config.alertTo;
     }
+    if (document.activeElement !== resendApiKeyInput && data.config.resendApiKeySet && !resendApiKeyInput.value) {
+      resendApiKeyInput.placeholder = '•••••••••••••••• (Clé Resend active)';
+    }
     if (document.activeElement !== intervalInput && data.config.checkIntervalSeconds) {
       intervalInput.value = data.config.checkIntervalSeconds;
     }
+
 
     if (document.activeElement !== telegramTokenInput && data.config.telegramBotToken !== undefined) {
       telegramTokenInput.value = data.config.telegramBotToken;
@@ -515,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const dates = Array.from(selectedDates).sort().join(',');
     const alertTo = document.getElementById('emailInput').value;
+    const resendApiKey = document.getElementById('resendApiKeyInput').value;
     const checkIntervalSeconds = parseInt(document.getElementById('intervalInput').value, 10);
     const routeValue = document.getElementById('routeSelect').value;
     
@@ -530,6 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
       body: JSON.stringify({
         dates,
         alertTo,
+        resendApiKey,
         checkIntervalSeconds,
         origin,
         destination,
@@ -546,6 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(data.message || 'Erreur lors de la sauvegarde de la configuration.', 'error');
     }
   });
+
 
 });
 
