@@ -48,19 +48,23 @@ export async function runSingleCheck(): Promise<{ newOffersCount: number; errors
       log(`Found ${newOffersToSend.length} new un-alerted offer(s). Sending email & Telegram alerts...`, 'INFO');
       const emailSent = await sendAlertEmail(newOffersToSend);
       
-      if (CONFIG.telegramEnabled) {
-        await sendTelegramAlert(newOffersToSend).catch(err => {
+      let telegramSent = false;
+      if (CONFIG.telegramEnabled && CONFIG.telegramBotToken && CONFIG.telegramChatId) {
+        telegramSent = await sendTelegramAlert(newOffersToSend).catch(err => {
           log(`[Telegram] Error sending alert: ${err}`, 'ERROR');
+          return false;
         });
       }
 
+      const alerted = emailSent || telegramSent;
+
       for (const offer of newOffersToSend) {
-        recordAlertSent(offer, emailSent);
+        recordAlertSent(offer, alerted);
       }
-      if (emailSent) {
-        log(`✅ Successfully alerted and recorded ${newOffersToSend.length} offer(s).`, 'INFO');
+      if (alerted) {
+        log(`✅ Successfully alerted and recorded ${newOffersToSend.length} offer(s) (Email: ${emailSent ? 'OK' : 'Off/N/A'}, Telegram: ${telegramSent ? 'OK' : 'Off/N/A'}).`, 'INFO');
       } else {
-        log(`⚠️ Recorded ${newOffersToSend.length} offer(s) in history. Email alert could not be sent (Telegram check completed).`, 'WARN');
+        log(`⚠️ Recorded ${newOffersToSend.length} offer(s) in history. Neither Email nor Telegram alert could be delivered. Please configure email or Telegram in Web UI.`, 'WARN');
       }
     } else {
       log('ℹ️ Check completed. No new un-alerted availability found.', 'INFO');

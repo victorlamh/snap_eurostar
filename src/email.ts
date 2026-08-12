@@ -174,7 +174,7 @@ export async function sendAlertEmail(offers: TrainOffer[]): Promise<boolean> {
     }
   }
 
-  log('❌ No valid email transport available (Neither Resend API key nor SMTP configured).', 'ERROR');
+  log('ℹ️ Email alert skipped (Neither Resend API key nor SMTP configured).', 'INFO');
   return false;
 }
 
