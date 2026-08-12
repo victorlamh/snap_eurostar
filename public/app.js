@@ -320,15 +320,33 @@ async function fetchStatus() {
       }
     }
 
+    const smtpHostInput = document.getElementById('smtpHostInput');
+    const smtpPortInput = document.getElementById('smtpPortInput');
+    const smtpUserInput = document.getElementById('smtpUserInput');
+    const smtpPassInput = document.getElementById('smtpPassInput');
+
     if (document.activeElement !== emailInput && data.config.alertTo !== undefined) {
       emailInput.value = data.config.alertTo;
     }
     if (document.activeElement !== resendApiKeyInput && data.config.resendApiKeySet && !resendApiKeyInput.value) {
       resendApiKeyInput.placeholder = '•••••••••••••••• (Clé Resend active)';
     }
+    if (document.activeElement !== smtpHostInput && data.config.smtpHost !== undefined) {
+      smtpHostInput.value = data.config.smtpHost;
+    }
+    if (document.activeElement !== smtpPortInput && data.config.smtpPort) {
+      smtpPortInput.value = data.config.smtpPort;
+    }
+    if (document.activeElement !== smtpUserInput && data.config.smtpUser !== undefined) {
+      smtpUserInput.value = data.config.smtpUser;
+    }
+    if (document.activeElement !== smtpPassInput && data.config.smtpPassSet && !smtpPassInput.value) {
+      smtpPassInput.placeholder = '•••••••••••••••• (Mot de passe configuré)';
+    }
     if (document.activeElement !== intervalInput && data.config.checkIntervalSeconds) {
       intervalInput.value = data.config.checkIntervalSeconds;
     }
+
 
 
     if (document.activeElement !== telegramTokenInput && data.config.telegramBotToken !== undefined) {
@@ -521,6 +539,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const dates = Array.from(selectedDates).sort().join(',');
     const alertTo = document.getElementById('emailInput').value;
     const resendApiKey = document.getElementById('resendApiKeyInput').value;
+    
+    const smtpHost = document.getElementById('smtpHostInput').value;
+    const smtpPort = document.getElementById('smtpPortInput').value;
+    const smtpUser = document.getElementById('smtpUserInput').value;
+    const smtpPass = document.getElementById('smtpPassInput').value;
+
     const checkIntervalSeconds = parseInt(document.getElementById('intervalInput').value, 10);
     const routeValue = document.getElementById('routeSelect').value;
     
@@ -537,6 +561,10 @@ document.addEventListener('DOMContentLoaded', () => {
         dates,
         alertTo,
         resendApiKey,
+        smtpHost,
+        smtpPort,
+        smtpUser,
+        smtpPass,
         checkIntervalSeconds,
         origin,
         destination,
@@ -553,6 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(data.message || 'Erreur lors de la sauvegarde de la configuration.', 'error');
     }
   });
+
 
 
 });

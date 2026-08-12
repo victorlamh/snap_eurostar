@@ -135,10 +135,36 @@
             </div>
 
             <div class="form-group">
-              <label for="resendApiKeyInput">🔑 Clé API Resend (Pour l'envoi d'e-mails)</label>
+              <label for="resendApiKeyInput">🔑 Clé API Resend (Optionnel)</label>
               <input type="password" id="resendApiKeyInput" placeholder="re_123456789_abcdefg...">
-              <small class="form-help">Gratuit sur <a href="https://resend.com" target="_blank" style="color: var(--accent);">resend.com</a> (Compte gratuit en 1 min). Laissez vide si vous utilisez uniquement Telegram.</small>
+              <small class="form-help">Optionnel. Gratuit sur resend.com.</small>
             </div>
+
+            <!-- Custom SMTP Mail Server Section -->
+            <div class="smtp-config-box">
+              <div class="smtp-header">
+                <span class="smtp-title">✉️ Serveur E-mail SMTP Direct (Gmail, Outlook, etc.)</span>
+              </div>
+              <div class="smtp-grid">
+                <div class="form-group">
+                  <label for="smtpHostInput">Serveur SMTP</label>
+                  <input type="text" id="smtpHostInput" placeholder="smtp.gmail.com">
+                </div>
+                <div class="form-group">
+                  <label for="smtpPortInput">Port</label>
+                  <input type="number" id="smtpPortInput" placeholder="587" value="587">
+                </div>
+                <div class="form-group">
+                  <label for="smtpUserInput">Utilisateur SMTP / E-mail</label>
+                  <input type="text" id="smtpUserInput" placeholder="votre.email@gmail.com">
+                </div>
+                <div class="form-group">
+                  <label for="smtpPassInput">Mot de passe d'application SMTP</label>
+                  <input type="password" id="smtpPassInput" placeholder="Mot de passe d'application">
+                </div>
+              </div>
+            </div>
+
 
 
             <!-- Telegram Alerts Section -->

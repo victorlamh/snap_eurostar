@@ -114,6 +114,10 @@ apiRouter.get('/status', (req: Request, res: Response) => {
       resendApiKeySet: !!CONFIG.resendApiKey,
       origin: CONFIG.origin,
       destination: CONFIG.destination,
+      smtpHost: CONFIG.smtpHost,
+      smtpPort: CONFIG.smtpPort,
+      smtpUser: CONFIG.smtpUser,
+      smtpPassSet: !!CONFIG.smtpPass,
       telegramBotToken: CONFIG.telegramBotToken,
       telegramChatId: CONFIG.telegramChatId,
       telegramEnabled: CONFIG.telegramEnabled
@@ -122,7 +126,21 @@ apiRouter.get('/status', (req: Request, res: Response) => {
 });
 
 apiRouter.post('/config', (req: Request, res: Response) => {
-  const { dates, alertTo, checkIntervalSeconds, resendApiKey, origin, destination, telegramBotToken, telegramChatId, telegramEnabled } = req.body;
+  const {
+    dates,
+    alertTo,
+    checkIntervalSeconds,
+    resendApiKey,
+    origin,
+    destination,
+    smtpHost,
+    smtpPort,
+    smtpUser,
+    smtpPass,
+    telegramBotToken,
+    telegramChatId,
+    telegramEnabled
+  } = req.body;
 
   let parsedDates: string[] | undefined;
   if (typeof dates === 'string') {
@@ -138,10 +156,15 @@ apiRouter.post('/config', (req: Request, res: Response) => {
     resendApiKey: typeof resendApiKey === 'string' ? resendApiKey : undefined,
     origin: typeof origin === 'string' ? origin : undefined,
     destination: typeof destination === 'string' ? destination : undefined,
+    smtpHost: typeof smtpHost === 'string' ? smtpHost : undefined,
+    smtpPort: typeof smtpPort === 'number' ? smtpPort : (typeof smtpPort === 'string' ? parseInt(smtpPort, 10) : undefined),
+    smtpUser: typeof smtpUser === 'string' ? smtpUser : undefined,
+    smtpPass: typeof smtpPass === 'string' ? smtpPass : undefined,
     telegramBotToken: typeof telegramBotToken === 'string' ? telegramBotToken : undefined,
     telegramChatId: typeof telegramChatId === 'string' ? telegramChatId : undefined,
     telegramEnabled: typeof telegramEnabled === 'boolean' ? telegramEnabled : undefined
   });
+
 
   log(`[Server] Configuration updated via Web UI. Route: ${CONFIG.origin} -> ${CONFIG.destination}`, 'INFO');
   res.json({ success: true, config: CONFIG });
