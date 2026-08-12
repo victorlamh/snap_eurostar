@@ -1,0 +1,8 @@
+node_modules/
+dist/
+debug/*.png
+debug/*.html
+data/*.sqlite
+data/*.db
+.env
+.DS_Store

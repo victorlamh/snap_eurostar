@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eurostar Snap Alert - Web Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="brand">
+        <span class="brand-icon">🚅</span>
+        <div class="brand-text">
+          <h1>Eurostar Snap Alert</h1>
+          <span class="brand-tagline">Londres (St Pancras) &rarr; Paris (Gare du Nord)</span>
+        </div>
+      </div>
+      <div class="header-status">
+        <div id="statusBadge" class="status-badge stopped">
+          <span class="status-dot"></span>
+          <span id="statusText">Scanner Arrêté</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <main class="dashboard-grid">
+      
+      <!-- Card 1: Scanner Controls & Live Metrics -->
+      <section class="card control-card">
+        <div class="card-header">
+          <h2><span class="icon">🎛️</span> Contrôle du Scanner</h2>
+        </div>
+        <div class="card-body">
+          <div class="action-buttons">
+            <button id="btnScanNow" class="btn btn-primary">
+              <span class="btn-icon">⚡</span> Scan Immédiat
+            </button>
+            <button id="btnStart" class="btn btn-success">
+              <span class="btn-icon">▶</span> Activer Auto-Scan
+            </button>
+            <button id="btnStop" class="btn btn-danger" disabled>
+              <span class="btn-icon">⏹</span> Arrêter Auto-Scan
+            </button>
+            <button id="btnTestEmail" class="btn btn-outline">
+              <span class="btn-icon">✉</span> Envoyer Email Test
+            </button>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <span class="metric-label">Prochain Scan</span>
+              <span id="nextScanCount" class="metric-value">--:--</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Vérifications Effectuées</span>
+              <span id="totalChecks" class="metric-value">0</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Offres Trouvées</span>
+              <span id="foundOffers" class="metric-value highlight">0</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Dernier Scan</span>
+              <span id="lastScanTime" class="metric-value text-subtle">Jamais</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 2: Configuration Settings -->
+      <section class="card config-card">
+        <div class="card-header">
+          <h2><span class="icon">⚙️</span> Configuration des Alertes</h2>
+        </div>
+        <div class="card-body">
+          <form id="configForm">
+            <div class="form-group">
+              <label for="routeSelect">Sens du Trajet Eurostar</label>
+              <select id="routeSelect" class="form-select">
+                <option value="7015400-8727100">🇬🇧 Londres (St Pancras) &rarr; 🇫🇷 Paris (Gare du Nord)</option>
+                <option value="8727100-7015400">🇫🇷 Paris (Gare du Nord) &rarr; 🇬🇧 Londres (St Pancras)</option>
+              </select>
+            </div>
+
+            <!-- Interactive Calendar Selection -->
+            <div class="form-group calendar-form-group">
+              <label>📅 Sélection des Dates de Départ Ciblées</label>
+              
+              <div class="calendar-widget">
+                <div class="calendar-header">
+                  <button type="button" id="calPrevMonth" class="cal-btn">&larr;</button>
+                  <span id="calMonthYearTitle" class="cal-title">Août 2026</span>
+                  <button type="button" id="calNextMonth" class="cal-btn">&rarr;</button>
+                </div>
+
+                <div class="calendar-quick-actions">
+                  <button type="button" id="btnQuickNextWeekend" class="cal-action-btn">⚡ Weekend Prochain</button>
+                  <button type="button" id="btnQuickNext7Days" class="cal-action-btn">📅 7 Prochains Jours</button>
+                  <button type="button" id="btnQuickClear" class="cal-action-btn text-danger">🗑️ Tout Effacer</button>
+                </div>
+
+                <div class="calendar-weekdays">
+                  <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+                </div>
+
+                <div id="calendarGrid" class="calendar-grid">
+                  <!-- Generated dynamically in app.js -->
+                </div>
+              </div>
+
+              <!-- Selected Dates Chips Display -->
+              <div class="selected-dates-wrapper">
+                <span class="selected-dates-label">Dates sélectionnées (<span id="selectedCount">0</span>) :</span>
+                <div id="selectedDateBadges" class="badges-container">
+                  <span class="badge-empty">Cliquez sur les jours du calendrier ci-dessus pour ajouter des dates.</span>
+                </div>
+              </div>
+
+              <!-- Hidden/Synced text input for backward compatibility -->
+              <input type="hidden" id="datesInput">
+            </div>
+
+            <div class="form-group">
+              <label for="emailInput">📧 Adresse E-mail pour les alertes</label>
+              <input type="email" id="emailInput" placeholder="votre.email@exemple.com" required>
+            </div>
+
+            <!-- Telegram Alerts Section -->
+            <div class="telegram-config-box">
+              <div class="telegram-header">
+                <label class="telegram-title">
+                  <span>💬 Alertes Telegram Instantanées (Optionnel)</span>
+                </label>
+                <label class="switch-toggle">
+                  <input type="checkbox" id="telegramEnabledInput" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="telegram-body">
+                <div class="form-group">
+                  <label for="telegramTokenInput">Bot Token Telegram</label>
+                  <input type="text" id="telegramTokenInput" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+                  <small class="form-help">Obtenu auprès de @BotFather sur Telegram.</small>
+                </div>
+                <div class="form-group">
+                  <label for="telegramChatIdInput">Chat ID Telegram</label>
+                  <input type="text" id="telegramChatIdInput" placeholder="987654321">
+                  <small class="form-help">Votre ID personnel ou de groupe Telegram.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="intervalInput">⏱️ Intervalle de scan (secondes)</label>
+              <input type="number" id="intervalInput" min="30" max="600" value="75" required>
+              <small class="form-help">Un délai aléatoire est appliqué pour la sécurité anti-bot.</small>
+            </div>
+
+            <div class="form-actions-row">
+              <button type="submit" id="btnSaveConfig" class="btn btn-secondary">
+                <span class="btn-icon">💾</span> Enregistrer la Configuration
+              </button>
+              <button type="button" id="btnTestTelegram" class="btn btn-outline-telegram">
+                <span class="btn-icon">💬</span> Test Telegram
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+
+      <!-- Card 3: Found Offers & Alert History -->
+      <section class="card history-card full-width">
+        <div class="card-header">
+          <h2><span class="icon">🎫</span> Billets Snap Détectés & Historique</h2>
+          <button id="btnRefreshHistory" class="btn-sm btn-outline">🔄 Rafraîchir</button>
+        </div>
+        <div class="card-body">
+          <div id="historyTableContainer" class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Créneau / Horaire</th>
+                  <th>Prix</th>
+                  <th>Statut Alerte</th>
+                  <th>Détecté Le</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    Aucune offre Snap détectée pour le moment. Lancez un scan pour vérifier la disponibilité !
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 4: Real-time Execution Logs Terminal -->
+      <section class="card logs-card full-width">
+        <div class="card-header">
+          <h2><span class="icon">🖥️</span> Console de Logs en Direct</h2>
+          <div class="terminal-actions">
+            <span class="live-indicator"><span class="pulse-dot"></span> LIVE</span>
+            <button id="btnClearLogs" class="btn-sm btn-outline">Effacer</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="logTerminal" class="terminal-box">
+            <div class="log-line info">[System] Console prêt. Les logs en direct apparaîtront ici.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Eurostar Snap Alert &bull; Surveillance automatique & alerte email immédiate</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

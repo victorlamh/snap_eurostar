@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: eurostar-snap-alert
+    env: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: HEADLESS
+        value: "true"
+      - key: CHECK_INTERVAL_SECONDS
+        value: "75"
+      - key: ORIGIN
+        value: "7015400"
+      - key: DESTINATION
+        value: "8727100"
+      - key: DATES
+        value: "2026-08-24,2026-08-25"
+      - key: ALERT_TO
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: TELEGRAM_ENABLED
+        value: "true"
+    disk:
+      name: eurostar-data
+      mountPath: /app/data
+      sizeGB: 1

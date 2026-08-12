@@ -1,0 +1,39 @@
+{
+  "name": "eurostar-snap-alert",
+  "version": "1.0.0",
+  "description": "Continuous Eurostar Snap train availability monitor and email alert system",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/server.ts",
+    "daemon": "tsx src/index.ts",
+    "check": "tsx src/check.ts",
+    "test-email": "tsx src/test-email.ts"
+  },
+  "keywords": [
+    "eurostar",
+    "snap",
+    "alert",
+    "playwright",
+    "resend",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/nodemailer": "^8.0.1",
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^9.0.5",
+    "playwright": "^1.50.1",
+    "resend": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
